@@ -118,3 +118,28 @@ form label span {
 footer {
   margin-top: 70vh;
 }
+
+.people a {
+  text-decoration: none;
+}
+
+.people li {
+  list-style: none;
+  text-align: left;
+  background: rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  border-radius: 4px;
+  margin: 20px 0;
+}
+
+.people li:hover {
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.people h3 {
+  font-size: 1.5rem;
+}
+
+.people p {
+  margin: 0;
+}

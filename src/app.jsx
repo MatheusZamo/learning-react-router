@@ -6,6 +6,7 @@ import {
   createRoutesFromElements,
   RouterProvider,
   Outlet,
+  useLoaderData,
 } from "react-router-dom"
 
 const Home = () => <h1>Page Home</h1>
@@ -24,6 +25,9 @@ const AppLayout = () => (
           </li>
           <li>
             <NavLink to="/help">Help</NavLink>
+          </li>
+          <li>
+            <NavLink to="/team">Team</NavLink>
           </li>
         </ul>
       </nav>
@@ -115,6 +119,37 @@ const NotFound = () => (
   </>
 )
 
+const TeamLayout = () => (
+  <>
+    <h1>Team</h1>
+    <p>Meet our team</p>
+    <Outlet />
+  </>
+)
+
+const peopleLoader = async () => {
+  const people = await fetch("https://jsonplaceholder.typicode.com/users")
+  return people.json()
+}
+
+const People = () => {
+  const people = useLoaderData()
+  return (
+    <div className="people">
+      <ul>
+        {people.map((person) => (
+          <Link key={person.id}>
+            <li>
+              <h3>{person.name}</h3>
+              <p>This is in {person.address.city}</p>
+            </li>
+          </Link>
+        ))}
+      </ul>
+    </div>
+  )
+}
+
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route patch="/" element={<AppLayout />}>
@@ -123,6 +158,9 @@ const router = createBrowserRouter(
       <Route path="/help" element={<HelpLayout />}>
         <Route path="faq" element={<Faq />} />
         <Route path="contact" element={<Contact />} />
+      </Route>
+      <Route path="team" element={<TeamLayout />}>
+        <Route index element={<People />} loader={peopleLoader} />
       </Route>
       <Route path="*" element={<NotFound />} />
     </Route>,
