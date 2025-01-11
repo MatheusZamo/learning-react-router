@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react"
 import {
   Route,
   NavLink,
@@ -6,7 +7,7 @@ import {
   createRoutesFromElements,
   RouterProvider,
   Outlet,
-  useLoaderData,
+  useParams,
 } from "react-router-dom"
 
 const Home = () => <h1>Page Home</h1>
@@ -127,13 +128,7 @@ const TeamLayout = () => (
   </>
 )
 
-const peopleLoader = async () => {
-  const people = await fetch("https://jsonplaceholder.typicode.com/users")
-  return people.json()
-}
-
-const People = () => {
-  const people = useLoaderData()
+const People = ({ people }) => {
   return (
     <div className="people">
       <ul>
@@ -150,15 +145,9 @@ const People = () => {
   )
 }
 
-const personLoader = async (props) => {
-  const people = await fetch(
-    `https://jsonplaceholder.typicode.com/users/${props.params.id}`,
-  )
-  return people.json()
-}
-
-const Person = () => {
-  const person = useLoaderData()
+const Person = ({ people }) => {
+  const params = useParams()
+  const person = people.find((person) => String(person.id) === params.id)
   return (
     <div className="person">
       <h2>{person.name}</h2>
@@ -169,24 +158,44 @@ const Person = () => {
   )
 }
 
-const router = createBrowserRouter(
-  createRoutesFromElements(
-    <Route patch="/" element={<AppLayout />}>
-      <Route index element={<Home />} />
-      <Route path="/about" element={<About />} />
-      <Route path="/help" element={<HelpLayout />}>
-        <Route path="faq" element={<Faq />} />
-        <Route path="contact" element={<Contact />} />
-      </Route>
-      <Route path="team" element={<TeamLayout />}>
-        <Route index element={<People />} loader={peopleLoader} />
-        <Route path=":id" element={<Person />} loader={personLoader} />
-      </Route>
-      <Route path="*" element={<NotFound />} />
-    </Route>,
-  ),
-)
+const App = () => {
+  const [people, setPeople] = useState([])
 
-const App = () => <RouterProvider router={router} />
+  useEffect(() => {
+    fetch("https://jsonplaceholder.typicode.com/users")
+      .then((response) => response.json())
+      .then((data) =>
+        setPeople(
+          data.map((person) => ({
+            id: person.id,
+            name: person.name,
+            address: { city: person.address.city },
+            email: person.email,
+            company: { catchPhrase: person.company.catchPhrase },
+          })),
+        ),
+      )
+      .catch((error) => alert(error.message))
+  }, [])
+
+  const router = createBrowserRouter(
+    createRoutesFromElements(
+      <Route patch="/" element={<AppLayout />}>
+        <Route index element={<Home />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/help" element={<HelpLayout />}>
+          <Route path="faq" element={<Faq />} />
+          <Route path="contact" element={<Contact />} />
+        </Route>
+        <Route path="team" element={<TeamLayout />}>
+          <Route index element={<People people={people} />} />
+          <Route path=":id" element={<Person people={people} />} />
+        </Route>
+        <Route path="*" element={<NotFound />} />
+      </Route>,
+    ),
+  )
+  return <RouterProvider router={router} />
+}
 
 export { App }
