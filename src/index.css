@@ -143,3 +143,20 @@ footer {
 .people p {
   margin: 0;
 }
+
+.person {
+  list-style: none;
+  text-align: left;
+  background: rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  border-radius: 4px;
+  margin: 20px 0;
+}
+
+.person h2 {
+  font-size: 2rem;
+}
+
+.person p {
+  margin: 0;
+}

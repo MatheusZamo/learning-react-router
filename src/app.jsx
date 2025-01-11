@@ -138,7 +138,7 @@ const People = () => {
     <div className="people">
       <ul>
         {people.map((person) => (
-          <Link key={person.id}>
+          <Link key={person.id} to={`/team/${person.id}`}>
             <li>
               <h3>{person.name}</h3>
               <p>This is in {person.address.city}</p>
@@ -146,6 +146,25 @@ const People = () => {
           </Link>
         ))}
       </ul>
+    </div>
+  )
+}
+
+const personLoader = async (props) => {
+  const people = await fetch(
+    `https://jsonplaceholder.typicode.com/users/${props.params.id}`,
+  )
+  return people.json()
+}
+
+const Person = () => {
+  const person = useLoaderData()
+  return (
+    <div className="person">
+      <h2>{person.name}</h2>
+      <p>{person.email}</p>
+      <p>{person.address.city}</p>
+      <p>{person.company.catchPhrase}</p>
     </div>
   )
 }
@@ -161,6 +180,7 @@ const router = createBrowserRouter(
       </Route>
       <Route path="team" element={<TeamLayout />}>
         <Route index element={<People />} loader={peopleLoader} />
+        <Route path=":id" element={<Person />} loader={personLoader} />
       </Route>
       <Route path="*" element={<NotFound />} />
     </Route>,
