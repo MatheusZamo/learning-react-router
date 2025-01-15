@@ -1,13 +1,14 @@
 import { useState, useEffect } from "react"
 import {
+  createBrowserRouter,
+  createRoutesFromElements,
+  useParams,
   Route,
   NavLink,
   Link,
-  createBrowserRouter,
-  createRoutesFromElements,
   RouterProvider,
   Outlet,
-  useParams,
+  Navigate,
 } from "react-router-dom"
 
 const Home = () => <h1>Page Home</h1>
@@ -184,6 +185,7 @@ const App = () => {
         <Route index element={<Home />} />
         <Route path="/about" element={<About />} />
         <Route path="/help" element={<HelpLayout />}>
+          <Route index element={<Navigate to="faq" replace />} />
           <Route path="faq" element={<Faq />} />
           <Route path="contact" element={<Contact />} />
         </Route>
