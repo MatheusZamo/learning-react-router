@@ -160,3 +160,7 @@ footer {
 .person p {
   margin: 0;
 }
+
+.person button {
+  margin-top: 1rem;
+}

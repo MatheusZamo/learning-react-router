@@ -3,6 +3,7 @@ import {
   createBrowserRouter,
   createRoutesFromElements,
   useParams,
+  useNavigate,
   Route,
   NavLink,
   Link,
@@ -148,13 +149,17 @@ const People = ({ people }) => {
 
 const Person = ({ people }) => {
   const params = useParams()
+  const navigate = useNavigate()
   const person = people.find((person) => String(person.id) === params.id)
+
+  const handleClickBack = () => navigate(-1)
   return (
     <div className="person">
       <h2>{person.name}</h2>
       <p>{person.email}</p>
       <p>{person.address.city}</p>
       <p>{person.company.catchPhrase}</p>
+      <button onClick={handleClickBack}>&larr; Back</button>
     </div>
   )
 }
