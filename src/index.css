@@ -164,3 +164,53 @@ footer {
 .person button {
   margin-top: 1rem;
 }
+
+.map-layout .container {
+  display: flex;
+  padding: 0;
+  height: 40rem;
+  margin: 2rem 0;
+}
+
+.map-layout .sidebar {
+  display: flex;
+  width: 50%;
+  justify-content: center;
+  align-items: center;
+  background-color: white;
+}
+
+.map-layout .map {
+  background-color: lightskyblue;
+  flex-basis: 56rem;
+}
+
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+}
+
+.sidebar li {
+  border: #535353 1px solid;
+  border-radius: 0.5rem;
+  padding: 1rem 1.5rem;
+  margin: 1.5rem;
+  text-decoration: none;
+}
+
+.sidebar a {
+  text-decoration: none;
+}
+
+.city-details {
+  text-align: left;
+  padding: 2rem 3rem;
+  border-radius: 5px;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.city-details p {
+  margin: 0;
+}

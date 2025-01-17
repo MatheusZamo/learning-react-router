@@ -32,6 +32,9 @@ const AppLayout = () => (
           <li>
             <NavLink to="/team">Team</NavLink>
           </li>
+          <li>
+            <NavLink to="/map">Map</NavLink>
+          </li>
         </ul>
       </nav>
     </header>
@@ -164,6 +167,22 @@ const Person = ({ people }) => {
   )
 }
 
+const MapLayout = () => {
+  return (
+    <div className="map-layout">
+      <h1>Mapa</h1>
+      <div className="container">
+        <div className="map">
+          <p>Map</p>
+        </div>
+        <div className="sidebar">
+          <p>sidebar</p>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 const App = () => {
   const [people, setPeople] = useState([])
 
@@ -188,8 +207,8 @@ const App = () => {
     createRoutesFromElements(
       <Route patch="/" element={<AppLayout />}>
         <Route index element={<Home />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/help" element={<HelpLayout />}>
+        <Route path="about" element={<About />} />
+        <Route path="help" element={<HelpLayout />}>
           <Route index element={<Navigate to="faq" replace />} />
           <Route path="faq" element={<Faq />} />
           <Route path="contact" element={<Contact />} />
@@ -198,6 +217,7 @@ const App = () => {
           <Route index element={<People people={people} />} />
           <Route path=":id" element={<Person people={people} />} />
         </Route>
+        <Route path="map" element={<MapLayout />}></Route>
         <Route path="*" element={<NotFound />} />
       </Route>,
     ),
