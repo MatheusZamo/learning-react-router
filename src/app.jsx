@@ -203,13 +203,45 @@ const MapLayout = () => {
           <p>Map</p>
         </div>
         <div className="sidebar">
-          <ul>
-            {cities.map((city) => (
-              <li key={city.id}>{city.name}</li>
-            ))}
-          </ul>
+          <Outlet context={cities} />
         </div>
       </div>
+    </div>
+  )
+}
+
+const Cities = () => {
+  const cities = useOutletContext()
+  return (
+    <ul>
+      {cities.map((city) => (
+        <Link key={city.id} to={`${city.id}`}>
+          <li>{city.name}</li>
+        </Link>
+      ))}
+    </ul>
+  )
+}
+
+const CityDetails = () => {
+  const cities = useOutletContext()
+  const params = useParams()
+  const navigate = useNavigate()
+  const city = cities.find((city) => params.id === String(city.id))
+
+  const handleClickBack = () => navigate(-1)
+
+  return (
+    <div className="city-details">
+      <div className="row">
+        <h5>City name</h5>
+        <h3>{city.name}</h3>
+      </div>
+      <div className="row">
+        <h5>Your notes</h5>
+        <p>{city.notes}</p>
+      </div>
+      <button onClick={handleClickBack}>&larr; Back</button>
     </div>
   )
 }
@@ -229,7 +261,11 @@ const App = () => {
           <Route index element={<People />} />
           <Route path=":id" element={<Person />} />
         </Route>
-        <Route path="map" element={<MapLayout />} loader={citiesLoader}></Route>
+        <Route path="map" element={<MapLayout />} loader={citiesLoader}>
+          <Route index element={<Navigate to="cities" replace />} />
+          <Route path="cities" element={<Cities />} />
+          <Route path="cities/:id" element={<CityDetails />} />
+        </Route>
         <Route path="*" element={<NotFound />} />
       </Route>,
     ),
