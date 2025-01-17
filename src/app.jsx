@@ -1,9 +1,10 @@
-import { useState, useEffect } from "react"
 import {
   createBrowserRouter,
   createRoutesFromElements,
   useParams,
   useNavigate,
+  useLoaderData,
+  useOutletContext,
   Route,
   NavLink,
   Link,
@@ -125,15 +126,32 @@ const NotFound = () => (
   </>
 )
 
-const TeamLayout = () => (
-  <>
-    <h1>Team</h1>
-    <p>Meet our team</p>
-    <Outlet />
-  </>
-)
+const peopleLoader = async () => {
+  const response = await fetch("https://jsonplaceholder.typicode.com/users")
+  const people = await response.json()
 
-const People = ({ people }) => {
+  return people.map((person) => ({
+    id: person.id,
+    name: person.name,
+    address: { city: person.address.city },
+    email: person.email,
+    company: { catchPhrase: person.company.catchPhrase },
+  }))
+}
+
+const TeamLayout = () => {
+  const people = useLoaderData()
+  return (
+    <>
+      <h1>Team</h1>
+      <p>Meet our team</p>
+      <Outlet context={people} />
+    </>
+  )
+}
+
+const People = () => {
+  const people = useOutletContext()
   return (
     <div className="people">
       <ul>
@@ -150,9 +168,10 @@ const People = ({ people }) => {
   )
 }
 
-const Person = ({ people }) => {
+const Person = () => {
   const params = useParams()
   const navigate = useNavigate()
+  const people = useOutletContext()
   const person = people.find((person) => String(person.id) === params.id)
 
   const handleClickBack = () => navigate(-1)
@@ -167,7 +186,15 @@ const Person = ({ people }) => {
   )
 }
 
+const citiesLoader = async () => {
+  const response = await fetch(
+    "https://raw.githubusercontent.com/MatheusZamo/learning-react-router/refs/heads/main/src/fake-city.json",
+  )
+  return response.json()
+}
+
 const MapLayout = () => {
+  const cities = useLoaderData()
   return (
     <div className="map-layout">
       <h1>Mapa</h1>
@@ -176,7 +203,11 @@ const MapLayout = () => {
           <p>Map</p>
         </div>
         <div className="sidebar">
-          <p>sidebar</p>
+          <ul>
+            {cities.map((city) => (
+              <li key={city.id}>{city.name}</li>
+            ))}
+          </ul>
         </div>
       </div>
     </div>
@@ -184,25 +215,6 @@ const MapLayout = () => {
 }
 
 const App = () => {
-  const [people, setPeople] = useState([])
-
-  useEffect(() => {
-    fetch("https://jsonplaceholder.typicode.com/users")
-      .then((response) => response.json())
-      .then((data) =>
-        setPeople(
-          data.map((person) => ({
-            id: person.id,
-            name: person.name,
-            address: { city: person.address.city },
-            email: person.email,
-            company: { catchPhrase: person.company.catchPhrase },
-          })),
-        ),
-      )
-      .catch((error) => alert(error.message))
-  }, [])
-
   const router = createBrowserRouter(
     createRoutesFromElements(
       <Route patch="/" element={<AppLayout />}>
@@ -213,11 +225,11 @@ const App = () => {
           <Route path="faq" element={<Faq />} />
           <Route path="contact" element={<Contact />} />
         </Route>
-        <Route path="team" element={<TeamLayout />}>
-          <Route index element={<People people={people} />} />
-          <Route path=":id" element={<Person people={people} />} />
+        <Route path="team" element={<TeamLayout />} loader={peopleLoader}>
+          <Route index element={<People />} />
+          <Route path=":id" element={<Person />} />
         </Route>
-        <Route path="map" element={<MapLayout />}></Route>
+        <Route path="map" element={<MapLayout />} loader={citiesLoader}></Route>
         <Route path="*" element={<NotFound />} />
       </Route>,
     ),
