@@ -13,6 +13,8 @@ import {
   Navigate,
 } from "react-router-dom"
 
+import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet"
+
 const Home = () => <h1>Page Home</h1>
 const About = () => <h1>Page About</h1>
 
@@ -200,7 +202,28 @@ const MapLayout = () => {
       <h1>Mapa</h1>
       <div className="container">
         <div className="map">
-          <p>Map</p>
+          <MapContainer
+            className="map-container"
+            center={[-19.917622853492556, -43.94031082020503]}
+            zoom={8}
+            scrollWheelZoom={true}
+          >
+            <TileLayer
+              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            />
+
+            {cities.map((city) => (
+              <Marker
+                key={city.id}
+                position={[city.position.latitude, city.position.longitude]}
+              >
+                <Popup>
+                  A pretty CSS3 popup. <br /> Easily customizable.
+                </Popup>
+              </Marker>
+            ))}
+          </MapContainer>
         </div>
         <div className="sidebar">
           <Outlet context={cities} />

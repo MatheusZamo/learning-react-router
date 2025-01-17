@@ -185,6 +185,10 @@ footer {
   flex-basis: 56rem;
 }
 
+.map-container {
+  height: 100%;
+}
+
 .sidebar ul {
   list-style: none;
   padding: 0;
