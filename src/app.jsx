@@ -269,6 +269,27 @@ const CityDetails = () => {
   )
 }
 
+const FormAddCity = () => (
+  <form className="form-add-city">
+    <label>
+      <span>Nome da cidade</span>
+      <input />
+    </label>
+    <label>
+      <span>Quando você foi para [NOME_DA_CIDADE]?</span>
+      <input type="date" />
+    </label>
+    <label>
+      <span>Suas anotações sobre a cidade</span>
+      <textarea></textarea>
+    </label>
+    <div className="buttons">
+      <button>&larr; Voltar</button>
+      <button>Adicionar</button>
+    </div>
+  </form>
+)
+
 const App = () => {
   const router = createBrowserRouter(
     createRoutesFromElements(
@@ -288,6 +309,7 @@ const App = () => {
           <Route index element={<Navigate to="cities" replace />} />
           <Route path="cities" element={<Cities />} />
           <Route path="cities/:id" element={<CityDetails />} />
+          <Route path="form" element={<FormAddCity />} />
         </Route>
         <Route path="*" element={<NotFound />} />
       </Route>,
