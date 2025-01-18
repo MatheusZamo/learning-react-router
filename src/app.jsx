@@ -5,6 +5,7 @@ import {
   useNavigate,
   useLoaderData,
   useOutletContext,
+  useSearchParams,
   Route,
   NavLink,
   Link,
@@ -13,7 +14,7 @@ import {
   Navigate,
 } from "react-router-dom"
 
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet"
+import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet"
 
 const Home = () => <h1>Page Home</h1>
 const About = () => <h1>Page About</h1>
@@ -195,8 +196,22 @@ const citiesLoader = async () => {
   return response.json()
 }
 
+const ChangeCenter = ({ position }) => {
+  const map = useMap()
+  map.setView(position)
+  return null
+}
+
+const beloHorizontePosition = {
+  latitude: "-19.917622853492556",
+  longitude: "-43.94031082020503",
+}
+
 const MapLayout = () => {
   const cities = useLoaderData()
+  const [searchParams, setSearchParams] = useSearchParams(beloHorizontePosition)
+  const latitude = searchParams.get("latitude")
+  const longitude = searchParams.get("longitude")
   return (
     <div className="map-layout">
       <h1>Mapa</h1>
@@ -204,7 +219,7 @@ const MapLayout = () => {
         <div className="map">
           <MapContainer
             className="map-container"
-            center={[-19.917622853492556, -43.94031082020503]}
+            center={[latitude, longitude]}
             zoom={8}
             scrollWheelZoom={true}
           >
@@ -223,6 +238,7 @@ const MapLayout = () => {
                 </Popup>
               </Marker>
             ))}
+            <ChangeCenter position={[latitude, longitude]} />
           </MapContainer>
         </div>
         <div className="sidebar">
@@ -237,9 +253,12 @@ const Cities = () => {
   const cities = useOutletContext()
   return (
     <ul>
-      {cities.map((city) => (
-        <Link key={city.id} to={`${city.id}`}>
-          <li>{city.name}</li>
+      {cities.map(({ id, position, name }) => (
+        <Link
+          key={id}
+          to={`${id}?latitude=${position.latitude}&longitude=${position.longitude}`}
+        >
+          <li>{name}</li>
         </Link>
       ))}
     </ul>
