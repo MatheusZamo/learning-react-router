@@ -212,7 +212,8 @@ const ChangeCenter = ({ position }) => {
 const ChangeToClickedCity = () => {
   const navigate = useNavigate()
   useMapEvents({
-    click: (e) => navigate("form"),
+    click: (e) =>
+      navigate(`form?latitude=${e.latlng.lat}&longitude=${e.latlng.lng}`),
   })
 }
 
@@ -226,6 +227,21 @@ const MapLayout = () => {
   const [searchParams, setSearchParams] = useSearchParams(beloHorizontePosition)
   const latitude = searchParams.get("latitude")
   const longitude = searchParams.get("longitude")
+
+  const handleGeoLocation = () => {
+    navigator.geolocation.getCurrentPosition(
+      ({ coords }) =>
+        setSearchParams({
+          latitude: coords.latitude,
+          longitude: coords.longitude,
+        }),
+      (error) =>
+        alert(
+          `Você precisa autorizar a obtenção da localização. \nClique no "i" na barra de endereço do navegador para autorizar. \n\n${error.message}`,
+        ),
+    )
+  }
+
   return (
     <div className="map-layout">
       <h1>Mapa</h1>
@@ -250,9 +266,14 @@ const MapLayout = () => {
                 <Popup>{name}</Popup>
               </Marker>
             ))}
-            <ChangeCenter position={[latitude, longitude]} />
+            {latitude && longitude && (
+              <ChangeCenter position={[latitude, longitude]} />
+            )}
             <ChangeToClickedCity />
           </MapContainer>
+          <button className="btn-geolocation" onClick={handleGeoLocation}>
+            Usar minha localização
+          </button>
         </div>
         <div className="sidebar">
           <Outlet context={cities} />
