@@ -322,26 +322,34 @@ const CityDetails = () => {
   )
 }
 
-const FormAddCity = () => (
-  <form className="form-add-city">
-    <label>
-      <span>Nome da cidade</span>
-      <input />
-    </label>
-    <label>
-      <span>Quando você foi para [NOME_DA_CIDADE]?</span>
-      <input type="date" />
-    </label>
-    <label>
-      <span>Suas anotações sobre a cidade</span>
-      <textarea></textarea>
-    </label>
-    <div className="buttons">
-      <button>&larr; Voltar</button>
-      <button>Adicionar</button>
-    </div>
-  </form>
-)
+const FormAddCity = () => {
+  const navigate = useNavigate()
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    navigate("/map/cities")
+  }
+
+  return (
+    <form className="form-add-city" onSubmit={handleSubmit}>
+      <label>
+        <span>Nome da cidade</span>
+        <input />
+      </label>
+      <label>
+        <span>Quando você foi para [NOME_DA_CIDADE]?</span>
+        <input type="date" />
+      </label>
+      <label>
+        <span>Suas anotações sobre a cidade</span>
+        <textarea></textarea>
+      </label>
+      <div className="buttons">
+        <button>&larr; Voltar</button>
+        <button>Adicionar</button>
+      </div>
+    </form>
+  )
+}
 
 const App = () => {
   const router = createBrowserRouter(
