@@ -14,7 +14,14 @@ import {
   Navigate,
 } from "react-router-dom"
 
-import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet"
+import {
+  useMapEvents,
+  MapContainer,
+  TileLayer,
+  Marker,
+  Popup,
+  useMap,
+} from "react-leaflet"
 
 const Home = () => <h1>Page Home</h1>
 const About = () => <h1>Page About</h1>
@@ -202,6 +209,13 @@ const ChangeCenter = ({ position }) => {
   return null
 }
 
+const ChangeToClickedCity = () => {
+  const navigate = useNavigate()
+  useMapEvents({
+    click: (e) => navigate("form"),
+  })
+}
+
 const beloHorizontePosition = {
   latitude: "-19.917622853492556",
   longitude: "-43.94031082020503",
@@ -228,17 +242,16 @@ const MapLayout = () => {
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             />
 
-            {cities.map((city) => (
+            {cities.map(({ id, position, name }) => (
               <Marker
-                key={city.id}
-                position={[city.position.latitude, city.position.longitude]}
+                key={id}
+                position={[position.latitude, position.longitude]}
               >
-                <Popup>
-                  A pretty CSS3 popup. <br /> Easily customizable.
-                </Popup>
+                <Popup>{name}</Popup>
               </Marker>
             ))}
             <ChangeCenter position={[latitude, longitude]} />
+            <ChangeToClickedCity />
           </MapContainer>
         </div>
         <div className="sidebar">
