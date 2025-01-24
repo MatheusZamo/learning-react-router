@@ -322,7 +322,19 @@ const CityDetails = () => {
   )
 }
 
+const cityLoader = async ({ request }) => {
+  const url = new URL(request.url)
+  const latitude = url.searchParams.get("latitude")
+  const longitude = url.searchParams.get("longitude")
+  const response = await fetch(
+    `https://api-bdc.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}`,
+  )
+  const info = await response.json()
+  return { name: info.city, country: info.countryName }
+}
+
 const FormAddCity = () => {
+  const city = useLoaderData()
   const navigate = useNavigate()
   const handleSubmit = (e) => {
     e.preventDefault()
@@ -333,10 +345,10 @@ const FormAddCity = () => {
     <form className="form-add-city" onSubmit={handleSubmit}>
       <label>
         <span>Nome da cidade</span>
-        <input />
+        <input defaultValue={city.name} />
       </label>
       <label>
-        <span>Quando você foi para [NOME_DA_CIDADE]?</span>
+        <span>Quando você foi para {city.name}?</span>
         <input type="date" />
       </label>
       <label>
@@ -370,7 +382,7 @@ const App = () => {
           <Route index element={<Navigate to="cities" replace />} />
           <Route path="cities" element={<Cities />} />
           <Route path="cities/:id" element={<CityDetails />} />
-          <Route path="form" element={<FormAddCity />} />
+          <Route path="form" element={<FormAddCity />} loader={cityLoader} />
         </Route>
         <Route path="*" element={<NotFound />} />
       </Route>,
