@@ -345,7 +345,7 @@ const FormAddCity = () => {
     <form className="form-add-city" onSubmit={handleSubmit}>
       <label>
         <span>Nome da cidade</span>
-        <input defaultValue={city.name} />
+        <input key={city.name} defaultValue={city.name} />
       </label>
       <label>
         <span>Quando você foi para {city.name}?</span>
