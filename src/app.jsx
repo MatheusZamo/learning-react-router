@@ -12,6 +12,8 @@ import {
   RouterProvider,
   Outlet,
   Navigate,
+  Form,
+  redirect,
 } from "react-router-dom"
 
 import {
@@ -335,33 +337,52 @@ const cityLoader = async ({ request }) => {
   return { name: info.city, country: info.countryName }
 }
 
+const formAction = async ({ request }) => {
+  const url = new URL(request.url)
+  const latitude = url.searchParams.get("latitude")
+  const longitude = url.searchParams.get("longitude")
+  const formData = await request.formData()
+  const response = await fetch(
+    `https://api-bdc.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}`,
+  )
+  const { countryName } = await response.json()
+  const city = {
+    ...Object.fromEntries(formData),
+    position: { latitude, longitude },
+    id: crypto.randomUUID(),
+    country: countryName,
+  }
+  const cities = await localforage.getItem("cities")
+  await localforage.setItem("cities", cities ? [...cities, city] : [city])
+  return redirect("/map")
+}
+
 const FormAddCity = () => {
   const city = useLoaderData()
   const navigate = useNavigate()
-  const handleSubmit = (e) => {
-    e.preventDefault()
-    navigate("/map/cities")
-  }
+  const handleClickBack = () => navigate("/map/cities")
 
   return (
-    <form className="form-add-city" onSubmit={handleSubmit}>
+    <Form method="post" className="form-add-city">
       <label>
         <span>Nome da cidade</span>
-        <input key={city.name} defaultValue={city.name} />
+        <input name="name" required key={city.name} defaultValue={city.name} />
       </label>
       <label>
         <span>Quando você foi para {city.name}?</span>
-        <input type="date" />
+        <input name="date" required type="date" />
       </label>
       <label>
         <span>Suas anotações sobre a cidade</span>
-        <textarea></textarea>
+        <textarea name="notes" required></textarea>
       </label>
       <div className="buttons">
-        <button>&larr; Voltar</button>
-        <button>Adicionar</button>
+        <button type="button" onClick={handleClickBack}>
+          &larr; Voltar
+        </button>
+        <button type="submit">Adicionar</button>
       </div>
-    </form>
+    </Form>
   )
 }
 
@@ -384,7 +405,12 @@ const App = () => {
           <Route index element={<Navigate to="cities" replace />} />
           <Route path="cities" element={<Cities />} />
           <Route path="cities/:id" element={<CityDetails />} />
-          <Route path="form" element={<FormAddCity />} loader={cityLoader} />
+          <Route
+            path="form"
+            element={<FormAddCity />}
+            loader={cityLoader}
+            action={formAction}
+          />
         </Route>
         <Route path="*" element={<NotFound />} />
       </Route>,
