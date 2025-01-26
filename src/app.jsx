@@ -23,6 +23,8 @@ import {
   useMap,
 } from "react-leaflet"
 
+import localforage from "localforage"
+
 const Home = () => <h1>Page Home</h1>
 const About = () => <h1>Page About</h1>
 
@@ -197,10 +199,8 @@ const Person = () => {
 }
 
 const citiesLoader = async () => {
-  const response = await fetch(
-    "https://raw.githubusercontent.com/MatheusZamo/learning-react-router/refs/heads/main/src/fake-city.json",
-  )
-  return response.json()
+  const cities = await localforage.getItem("cities")
+  return cities ?? []
 }
 
 const ChangeCenter = ({ position }) => {
@@ -285,7 +285,9 @@ const MapLayout = () => {
 
 const Cities = () => {
   const cities = useOutletContext()
-  return (
+  return cities.length === 0 ? (
+    <p>Clique no mapa para adicionar uma viagem</p>
+  ) : (
     <ul>
       {cities.map(({ id, position, name }) => (
         <Link
