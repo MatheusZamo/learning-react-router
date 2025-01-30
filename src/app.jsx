@@ -7,6 +7,7 @@ import {
   useOutletContext,
   useSearchParams,
   useNavigation,
+  useRouteError,
   Route,
   NavLink,
   Link,
@@ -394,31 +395,47 @@ const FormAddCity = () => {
   )
 }
 
+const ErrorMessage = () => {
+  const error = useRouteError()
+
+  return (
+    <div>
+      <h1>Opa!</h1>
+      <p>Desculpe, um erro inesperado aconteceu:</p>
+      <p>
+        <i>{error.message}</i>
+      </p>
+    </div>
+  )
+}
+
 const App = () => {
   const router = createBrowserRouter(
     createRoutesFromElements(
       <Route patch="/" element={<AppLayout />}>
-        <Route index element={<Home />} />
-        <Route path="about" element={<About />} />
-        <Route path="help" element={<HelpLayout />}>
-          <Route index element={<Navigate to="faq" replace />} />
-          <Route path="faq" element={<Faq />} />
-          <Route path="contact" element={<Contact />} />
-        </Route>
-        <Route path="team" element={<TeamLayout />} loader={peopleLoader}>
-          <Route index element={<People />} />
-          <Route path=":id" element={<Person />} />
-        </Route>
-        <Route path="map" element={<MapLayout />} loader={citiesLoader}>
-          <Route index element={<Navigate to="cities" replace />} />
-          <Route path="cities" element={<Cities />} />
-          <Route path="cities/:id" element={<CityDetails />} />
-          <Route
-            path="form"
-            element={<FormAddCity />}
-            loader={cityLoader}
-            action={formAction}
-          />
+        <Route errorElement={<ErrorMessage />}>
+          <Route index element={<Home />} />
+          <Route path="about" element={<About />} />
+          <Route path="help" element={<HelpLayout />}>
+            <Route index element={<Navigate to="faq" replace />} />
+            <Route path="faq" element={<Faq />} />
+            <Route path="contact" element={<Contact />} />
+          </Route>
+          <Route path="team" element={<TeamLayout />} loader={peopleLoader}>
+            <Route index element={<People />} />
+            <Route path=":id" element={<Person />} />
+          </Route>
+          <Route path="map" element={<MapLayout />} loader={citiesLoader}>
+            <Route index element={<Navigate to="cities" replace />} />
+            <Route path="cities" element={<Cities />} />
+            <Route path="cities/:id" element={<CityDetails />} />
+            <Route
+              path="form"
+              element={<FormAddCity />}
+              loader={cityLoader}
+              action={formAction}
+            />
+          </Route>
         </Route>
         <Route path="*" element={<NotFound />} />
       </Route>,
