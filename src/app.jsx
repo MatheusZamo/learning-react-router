@@ -6,6 +6,7 @@ import {
   useLoaderData,
   useOutletContext,
   useSearchParams,
+  useNavigation,
   Route,
   NavLink,
   Link,
@@ -30,37 +31,44 @@ import localforage from "localforage"
 const Home = () => <h1>Page Home</h1>
 const About = () => <h1>Page About</h1>
 
-const AppLayout = () => (
-  <>
-    <header>
-      <nav>
-        <ul>
-          <li>
-            <NavLink to="/">Home</NavLink>
-          </li>
-          <li>
-            <NavLink to="/about">About</NavLink>
-          </li>
-          <li>
-            <NavLink to="/help">Help</NavLink>
-          </li>
-          <li>
-            <NavLink to="/team">Team</NavLink>
-          </li>
-          <li>
-            <NavLink to="/map">Map</NavLink>
-          </li>
-        </ul>
-      </nav>
-    </header>
+const AppLayout = () => {
+  const navigation = useNavigation()
+  return (
+    <>
+      <header>
+        <nav>
+          <ul>
+            <li>
+              <NavLink to="/">Home</NavLink>
+            </li>
+            <li>
+              <NavLink to="/about">About</NavLink>
+            </li>
+            <li>
+              <NavLink to="/help">Help</NavLink>
+            </li>
+            <li>
+              <NavLink to="/team">Team</NavLink>
+            </li>
+            <li>
+              <NavLink to="/map">Map</NavLink>
+            </li>
+          </ul>
+        </nav>
+      </header>
 
-    <main>
-      <Outlet />
-    </main>
+      <main
+        className={`main-app-layout ${
+          navigation.state !== "idle" ? "loading" : ""
+        }`}
+      >
+        <Outlet />
+      </main>
 
-    <footer>Rodape</footer>
-  </>
-)
+      <footer>Rodape</footer>
+    </>
+  )
+}
 
 const HelpLayout = () => (
   <div className="help-layout">
